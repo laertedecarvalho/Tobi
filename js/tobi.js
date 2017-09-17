@@ -459,13 +459,13 @@
       var movementX = drag.endX - drag.startX,
           movementY = drag.endY - drag.startY,
           movementXDistance = Math.abs(movementX),
-          movementYDistance = Math.abs(movementX);
+          movementYDistance = Math.abs(movementY);
 
       if (movementX > 0 && movementXDistance > config.threshold) {
         prev();
       } else if (movementX < 0 && movementXDistance > config.threshold) {
         next();
-      } else if (movementY > 0 && movementYDistance > config.threshold && config.swipeClose) {
+      } else if (movementY < 0 && movementYDistance > config.threshold && config.swipeClose) {
         closeOverlay();
       }
     };
@@ -535,6 +535,7 @@
      *
      */
     var touchmoveHandler = function touchmoveHandler(event) {
+      event.preventDefault();
       event.stopPropagation();
 
       if (pointerDown) {
@@ -653,8 +654,8 @@
 
       if (config.draggable) {
         // Touch events
-        overlay.addEventListener('touchstart', touchstartHandler, { passive: true });
-        overlay.addEventListener('touchmove', touchmoveHandler, { passive: true });
+        overlay.addEventListener('touchstart', touchstartHandler);
+        overlay.addEventListener('touchmove', touchmoveHandler);
         overlay.addEventListener('touchend', touchendHandler);
 
         // Mouse events
