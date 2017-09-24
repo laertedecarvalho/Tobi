@@ -1,0 +1,24 @@
+{
+  "name": "rqrauhvmra__tobi",
+  "version": "1.1.0",
+  "description": "A simple lightbox script without dependencies.",
+  "main": "js/tobi.js",
+  "style": "css/tobi.css",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rqrauhvmra/Tobi.git"
+  },
+  "keywords": [
+    "lightbox",
+    "javascript"
+  ],
+  "author": "rqrauhvmra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rqrauhvmra/Tobi/issues"
+  },
+  "homepage": "https://github.com/rqrauhvmra/Tobi"
+}
