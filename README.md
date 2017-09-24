@@ -6,13 +6,13 @@ Simple lightbox script without dependencies.
 
 ### Download
 
-- CSS
-  - `css/tobi.min.css` minified, or
-  - `css/tobi.css` un-minified
+CSS: `css/tobi.min.css` minified, or `css/tobi.css` un-minified
 
-- JavaScript
-  - `js/tobi.min.js` minified, or
-  - `js/tobi.js` un-minified
+JavaScript: `js/tobi.min.js` minified, or `js/tobi.js` un-minified
+
+### Package managers
+
+npm: `npm install rqrauhvmra__tobi --save`
 
 ## Usage
 
