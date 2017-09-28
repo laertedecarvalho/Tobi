@@ -56,11 +56,19 @@ The following options are available:
 | draggable | bool | true | Use dragging and touch swiping |
 | threshold | number | 20 | Touch and mouse dragging threshold (in px) |
 
-## TODO
+## Missing stuff
 
 - Possibility to group images
 - Better dragging / swiping
 
+## Contributing
+
+- Report issues
+- Open pull request with improvements
+- Spread the word
+
 ## Notes
 
-Feel free to report any issues. Contributions are always welcome!
+If you do anything interesting with this code, please let me know. I'd love to see it.
+
+[![PayPal](https://benjaminedenhuizen.com/data/pp.png)](https://paypal.me/rqrauhvmra)
