@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.1.0
+ * @version 1.2.0
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -197,22 +197,28 @@
      *
      */
     var updateFocus = function updateFocus(direction) {
-      prevButton.disabled = false;
-      nextButton.disabled = false;
-
-      if (currentIndex === galleryLength - 1) {
-        prevButton.disabled = false;
-        nextButton.disabled = true;
-      } else if (currentIndex === 0) {
-        prevButton.disabled = true;
-        nextButton.disabled = false;
-      }
-
       if (config.nav) {
-        if (!nextButton.disabled && direction !== 'left') {
+        prevButton.disabled = false;
+        nextButton.disabled = false;
+
+        if (currentIndex === galleryLength - 1) {
+          nextButton.disabled = true;
+        } else if (currentIndex === 0) {
+          prevButton.disabled = true;
+        }
+
+        if (direction === 'none' && !nextButton.disabled) {
           nextButton.focus();
-        } else {
+        } else if (direction === 'none' && nextButton.disabled && !prevButton.disabled) {
           prevButton.focus();
+        } else if (!nextButton.disabled && direction === 'right') {
+          nextButton.focus();
+        } else if (nextButton.disabled && direction === 'right' && !prevButton.disabled) {
+          prevButton.focus();
+        } else if (!prevButton.disabled && direction === 'left') {
+          prevButton.focus();
+        } else if (prevButton.disabled && direction === 'left' && !nextButton.disabled) {
+          nextButton.focus();
         }
       } else if (config.close) {
         closeButton.focus();
@@ -240,7 +246,7 @@
 
         updateOffset();
         updateCounter();
-        updateFocus();
+        updateFocus('right');
 
         preload(currentIndex + 1);
       }
@@ -257,7 +263,7 @@
 
         updateOffset();
         updateCounter();
-        updateFocus();
+        updateFocus('left');
 
         preload(currentIndex - 1);
       }
@@ -409,7 +415,7 @@
       updateCounter();
       overlay.setAttribute('aria-hidden', 'false');
 
-      updateFocus();
+      updateFocus('none');
     };
 
 
@@ -478,10 +484,8 @@
     var clickHandler = function clickHandler(event) {
       if (this === prevButton) {
         prev();
-        updateFocus('left');
       } else if (this === nextButton) {
         next();
-        updateFocus('right');
       } else if (this === closeButton || this === overlay && event.target.id.indexOf('tobi-figure-wrapper') !== -1) {
         closeOverlay();
       }
@@ -499,13 +503,11 @@
         // Left arrow
         case 37:
           prev();
-          updateFocus('left');
           break;
 
         // Right arrow
         case 39:
           next();
-          updateFocus('right');
           break;
 
         // Esc
@@ -630,7 +632,7 @@
     var trapFocus = function trapFocus(event) {
       if (overlay.getAttribute('aria-hidden') === 'false' && !overlay.contains(event.target)) {
         event.stopPropagation();
-        updateFocus();
+        updateFocus('none');
       }
     };
 
@@ -738,10 +740,10 @@
 
         // Bind click event handler
         element.addEventListener('click', function(event) {
-          openOverlay(index);
-
           event.preventDefault();
-        }, true);
+
+          openOverlay(index);
+        });
 
         // Add element to gallery
         gallery.push({
