@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.3.0
+ * @version 1.3.1
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -462,7 +462,7 @@
         prev()
       } else if (this === nextButton) {
         next()
-      } else if ((this === closeButton || this === overlay) && event.target.id.indexOf('tobi-figure-wrapper') !== -1) {
+      } else if (this === closeButton || (this === overlay && event.target.id.indexOf('tobi-figure-wrapper') !== -1)) {
         closeOverlay()
       }
 
