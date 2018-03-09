@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.2.0
+ * @version 1.3.0
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -10,20 +10,19 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(factory);
+    define(factory)
   } else if (typeof module === 'object' && module.exports) {
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
-    module.exports = factory();
+    module.exports = factory()
   } else {
     // Browser globals (root is window)
-    root.Tobi = factory();
+    root.Tobi = factory()
   }
-}(this, function() {
-  var Tobi = function Tobi(userOptions) {
-    'use strict';
-
+}(this, function () {
+  var Tobi = function Tobi (userOptions) {
+    'use strict'
 
     /**
      * Merge default options with user options
@@ -31,7 +30,7 @@
      * @param {Object} userOptions - User options
      * @returns {Object} - Custom options
      */
-    var mergeOptions = function mergeOptions(userOptions) {
+    var mergeOptions = function mergeOptions (userOptions) {
       // Default options
       var options = {
         selector: '.lightbox',
@@ -51,86 +50,77 @@
         scroll: false,
         draggable: true,
         threshold: 20
-      };
-
-      if (userOptions) {
-        Object.keys(userOptions).forEach(function(key) {
-          options[key] = userOptions[key];
-        });
       }
 
-      return options;
-    };
+      if (userOptions) {
+        Object.keys(userOptions).forEach(function (key) {
+          options[key] = userOptions[key]
+        })
+      }
 
+      return options
+    }
 
     /**
      * Global variables
      *
      */
     var config = {},
-        transformProperty = null,
-        gallery = [],
-        galleryLength = null,
-        sliderElement = [],
-        currentIndex = 0,
-        drag = {},
-        pointerDown = false,
-        lastFocus = null;
-
+      transformProperty = null,
+      gallery = [],
+      galleryLength = null,
+      sliderElement = [],
+      currentIndex = 0,
+      drag = {},
+      pointerDown = false,
+      lastFocus = null
 
     /*
      * Create lightbox components
      *
      */
-    var overlay = document.createElement('div');
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.classList.add('tobi-overlay');
-    document.getElementsByTagName('body')[0].appendChild(overlay);
+    var overlay = document.createElement('div')
+    overlay.setAttribute('role', 'dialog')
+    overlay.setAttribute('aria-hidden', 'true')
+    overlay.classList.add('tobi-overlay')
+    document.getElementsByTagName('body')[0].appendChild(overlay)
 
+    var slider = document.createElement('div')
+    slider.classList.add('tobi-slider')
+    overlay.appendChild(slider)
 
-    var slider = document.createElement('div');
-    slider.classList.add('tobi-slider');
-    overlay.appendChild(slider);
+    var prevButton = document.createElement('button')
+    prevButton.setAttribute('type', 'button')
+    prevButton.setAttribute('aria-label', 'Previous')
+    overlay.appendChild(prevButton)
 
+    var nextButton = document.createElement('button')
+    nextButton.setAttribute('type', 'button')
+    nextButton.setAttribute('aria-label', 'Next')
+    overlay.appendChild(nextButton)
 
-    var prevButton = document.createElement('button');
-    prevButton.setAttribute('type', 'button');
-    prevButton.setAttribute('aria-label', 'Previous');
-    overlay.appendChild(prevButton);
+    var closeButton = document.createElement('button')
+    closeButton.setAttribute('type', 'button')
+    closeButton.setAttribute('aria-label', 'Close')
+    overlay.appendChild(closeButton)
 
-
-    var nextButton = document.createElement('button');
-    nextButton.setAttribute('type', 'button');
-    nextButton.setAttribute('aria-label', 'Next');
-    overlay.appendChild(nextButton);
-
-
-    var closeButton = document.createElement('button');
-    closeButton.setAttribute('type', 'button');
-    closeButton.setAttribute('aria-label', 'Close');
-    overlay.appendChild(closeButton);
-
-
-    var counter = document.createElement('div');
-    counter.classList.add('tobi-counter');
-    overlay.appendChild(counter);
-
+    var counter = document.createElement('div')
+    counter.classList.add('tobi-counter')
+    overlay.appendChild(counter)
 
     /**
      * Determine if browser supports unprefixed transform property
      *
      * @returns {string} - Transform property supported by client
      */
-    var transformSupport = function transformSupport() {
-      var div = document.documentElement.style;
+    var transformSupport = function transformSupport () {
+      var div = document.documentElement.style
 
-      if (typeof div.transform == 'string') {
-        return 'transform';
+      if (typeof div.transform === 'string') {
+        return 'transform'
       }
-      return 'WebkitTransform';
-    };
-
+      return 'WebkitTransform'
+    }
 
     /**
      * Load image with particular index
@@ -138,626 +128,599 @@
      * @param {number} index - Item index to load
      * @param {function} callback - Optional callback function
      */
-    var load = function load(index, callback) {
+    var load = function load (index, callback) {
       if (typeof gallery[index] === 'undefined' || typeof sliderElement[index] === 'undefined') {
-        return;
-
+        return
       } else if (!sliderElement[index].getElementsByTagName('img')[0].hasAttribute('data-src')) {
         if (callback) {
-          callback();
+          callback()
         }
-        return;
+        return
       }
 
       var figure = sliderElement[index].getElementsByTagName('figure')[0],
-          image = figure.getElementsByTagName('img')[0],
-          figcaption = figure.getElementsByTagName('figcaption')[0];
+        image = figure.getElementsByTagName('img')[0],
+        figcaption = figure.getElementsByTagName('figcaption')[0]
 
-      image.onload = function() {
-        var loader = figure.querySelector('.tobi-loader');
-        figure.removeChild(loader);
-        image.style.opacity = '1';
+      image.onload = function () {
+        var loader = figure.querySelector('.tobi-loader')
+        figure.removeChild(loader)
+        image.style.opacity = '1'
 
         if (figcaption) {
-          figcaption.style.opacity = '1';
+          figcaption.style.opacity = '1'
         }
-      };
+      }
 
-      image.setAttribute('src', image.getAttribute('data-src'));
-      image.removeAttribute('data-src');
+      image.setAttribute('src', image.getAttribute('data-src'))
+      image.removeAttribute('data-src')
 
       if (callback) {
-        callback();
+        callback()
       }
-    };
-
+    }
 
     /**
      * Update the offset
      *
      */
-    var updateOffset = function updateOffset() {
-      var offset = -currentIndex * 100 + '%';
+    var updateOffset = function updateOffset () {
+      var offset = -currentIndex * 100 + '%'
 
-      slider.style[transformProperty] = 'translate3d(' + offset + ', 0, 0)';
-    };
-
+      slider.style[transformProperty] = 'translate3d(' + offset + ', 0, 0)'
+    }
 
     /**
      * Update the counter
      *
      */
-    var updateCounter = function updateCounter() {
-      counter.innerHTML = (currentIndex + 1) + '/' + galleryLength;
-    };
-
+    var updateCounter = function updateCounter () {
+      counter.innerHTML = (currentIndex + 1) + '/' + galleryLength
+    }
 
     /**
      * Set the focus to the next element
      *
      */
-    var updateFocus = function updateFocus(direction) {
+    var updateFocus = function updateFocus (direction) {
       if (config.nav) {
-        prevButton.disabled = false;
-        nextButton.disabled = false;
+        prevButton.disabled = false
+        nextButton.disabled = false
 
         if (currentIndex === galleryLength - 1) {
-          nextButton.disabled = true;
+          nextButton.disabled = true
         } else if (currentIndex === 0) {
-          prevButton.disabled = true;
+          prevButton.disabled = true
         }
 
         if (direction === 'none' && !nextButton.disabled) {
-          nextButton.focus();
+          nextButton.focus()
         } else if (direction === 'none' && nextButton.disabled && !prevButton.disabled) {
-          prevButton.focus();
+          prevButton.focus()
         } else if (!nextButton.disabled && direction === 'right') {
-          nextButton.focus();
+          nextButton.focus()
         } else if (nextButton.disabled && direction === 'right' && !prevButton.disabled) {
-          prevButton.focus();
+          prevButton.focus()
         } else if (!prevButton.disabled && direction === 'left') {
-          prevButton.focus();
+          prevButton.focus()
         } else if (prevButton.disabled && direction === 'left' && !nextButton.disabled) {
-          nextButton.focus();
+          nextButton.focus()
         }
       } else if (config.close) {
-        closeButton.focus();
+        closeButton.focus()
       }
-    };
-
+    }
 
     /**
      * Preload image with particular index
      *
      * @param {number} index - Item index to preload
      */
-    var preload = function preload(index) {
-      load(index);
-    };
-
+    var preload = function preload (index) {
+      load(index)
+    }
 
     /**
      * Go to next image
      *
      */
-    var next = function next() {
+    var next = function next () {
       if (currentIndex < galleryLength - 1) {
-        currentIndex++;
+        currentIndex++
 
-        updateOffset();
-        updateCounter();
-        updateFocus('right');
+        updateOffset()
+        updateCounter()
+        updateFocus('right')
 
-        preload(currentIndex + 1);
+        preload(currentIndex + 1)
       }
-    };
-
+    }
 
     /**
      * Go to previous image
      *
      */
-    var prev = function prev() {
+    var prev = function prev () {
       if (currentIndex > 0) {
-        currentIndex--;
+        currentIndex--
 
-        updateOffset();
-        updateCounter();
-        updateFocus('left');
+        updateOffset()
+        updateCounter()
+        updateFocus('left')
 
-        preload(currentIndex - 1);
+        preload(currentIndex - 1)
       }
-    };
-
+    }
 
     /**
      * Create overlay
      *
      */
-    var createOverlay = function createOverlay() {
+    var createOverlay = function createOverlay () {
       var i = 0,
-          x = 0,
-          figureWrapper = null,
-          figure = null,
-          image = null,
-          figuresIds = [],
-          figcaption = null,
-          figcaptionsIds = [];
+        x = 0,
+        figureWrapper = null,
+        figure = null,
+        image = null,
+        figuresIds = [],
+        figcaption = null,
+        figcaptionsIds = []
 
       for (; i < galleryLength; ++i) {
-        sliderElement[i] = document.createElement('div');
-        sliderElement[i].classList.add('tobi-slide');
-        sliderElement[i].id = 'tobi-slide-' + i;
+        sliderElement[i] = document.createElement('div')
+        sliderElement[i].classList.add('tobi-slide')
+        sliderElement[i].id = 'tobi-slide-' + i
 
         // Create figure wrapper
-        figureWrapper = document.createElement('div');
-        figureWrapper.classList.add('tobi-figure-wrapper');
-        figureWrapper.id = 'tobi-figure-wrapper-' + i;
+        figureWrapper = document.createElement('div')
+        figureWrapper.classList.add('tobi-figure-wrapper')
+        figureWrapper.id = 'tobi-figure-wrapper-' + i
 
         // Create figure
-        figure = document.createElement('figure');
-        figure.innerHTML = '<div class="tobi-loader"></div>';
+        figure = document.createElement('figure')
+        figure.innerHTML = '<div class="tobi-loader"></div>'
 
         // Create image
-        image = document.createElement('img');
-        image.style.opacity = '0';
+        image = document.createElement('img')
+        image.style.opacity = '0'
 
         if (gallery[i].selector.getElementsByTagName('img')[0] && gallery[i].selector.getElementsByTagName('img')[0].alt) {
-          image.alt = gallery[i].selector.getElementsByTagName('img')[0].alt;
+          image.alt = gallery[i].selector.getElementsByTagName('img')[0].alt
         } else {
-          image.alt = '';
+          image.alt = ''
         }
-        image.setAttribute('src', '');
-        image.setAttribute('data-src', gallery[i].selector.href);
+        image.setAttribute('src', '')
+        image.setAttribute('data-src', gallery[i].selector.href)
 
         // Add image to figure
-        figure.appendChild(image);
+        figure.appendChild(image)
 
         // Create figcaption
         if (config.captions) {
-          figcaption = document.createElement('figcaption');
-          figcaption.style.opacity = '0';
+          figcaption = document.createElement('figcaption')
+          figcaption.style.opacity = '0'
 
-          if (config.captionsSelector == 'self' && gallery[i].selector.getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = gallery[i].selector.getAttribute(config.captionAttribute);
-          } else if (config.captionsSelector == 'img' && gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute);
+          if (config.captionsSelector === 'self' && gallery[i].selector.getAttribute(config.captionAttribute)) {
+            figcaption.innerHTML = gallery[i].selector.getAttribute(config.captionAttribute)
+          } else if (config.captionsSelector === 'img' && gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
+            figcaption.innerHTML = gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)
           }
 
           if (figcaption.innerHTML) {
-            figure.id = 'tobi-figure-' + x;
-            figcaption.id = 'tobi-figcaption-' + x;
-            figure.appendChild(figcaption);
+            figure.id = 'tobi-figure-' + x
+            figcaption.id = 'tobi-figcaption-' + x
+            figure.appendChild(figcaption)
 
-            figuresIds.push('tobi-figure-' + x);
-            figcaptionsIds.push('tobi-figcaption-' + x);
-            ++x;
+            figuresIds.push('tobi-figure-' + x)
+            figcaptionsIds.push('tobi-figcaption-' + x)
+            ++x
           }
         }
 
         // Add figure to figure wrapper
-        figureWrapper.appendChild(figure);
+        figureWrapper.appendChild(figure)
 
         // Add figure wrapper to slider element
-        sliderElement[i].appendChild(figureWrapper);
+        sliderElement[i].appendChild(figureWrapper)
 
         // Add slider element to slider
-        slider.appendChild(sliderElement[i]);
+        slider.appendChild(sliderElement[i])
       }
 
       if (x !== 0) {
-        overlay.setAttribute('aria-labelledby', figuresIds.join(' '));
-        overlay.setAttribute('aria-describedby', figcaptionsIds.join(' '));
+        overlay.setAttribute('aria-labelledby', figuresIds.join(' '))
+        overlay.setAttribute('aria-describedby', figcaptionsIds.join(' '))
       }
 
       // Hide buttons if necessary
       if (!config.nav || galleryLength === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
-        prevButton.style.display = 'none';
-        nextButton.style.display = 'none';
+        prevButton.style.display = 'none'
+        nextButton.style.display = 'none'
       } else {
-        prevButton.innerHTML = config.navText[0];
-        nextButton.innerHTML = config.navText[1];
+        prevButton.innerHTML = config.navText[0]
+        nextButton.innerHTML = config.navText[1]
       }
 
       // Hide counter if necessary
       if (!config.counter || galleryLength === 1) {
-        counter.style.display = 'none';
+        counter.style.display = 'none'
       }
 
       // Hide close if necessary
       if (!config.close) {
-        closeButton.style.display = 'none';
+        closeButton.style.display = 'none'
       } else {
-        closeButton.innerHTML = config.closeText;
+        closeButton.innerHTML = config.closeText
       }
-
 
       if (config.draggable) {
-        slider.style.cursor = '-webkit-grab';
+        slider.style.cursor = '-webkit-grab'
       }
-    };
-
+    }
 
     /**
      * Open overlay
      *
      * @param {number} index - Item index to load
      */
-    var openOverlay = function openOverlay(index) {
+    var openOverlay = function openOverlay (index) {
       if (overlay.getAttribute('aria-hidden') === 'false') {
-        return;
+        return
       }
 
       if (!config.scroll) {
-        document.documentElement.classList.add('tobi--is-open');
-        document.body.classList.add('tobi--is-open');
+        document.documentElement.classList.add('tobi--is-open')
+        document.body.classList.add('tobi--is-open')
       }
 
       // Save last focused element
-      lastFocus = document.activeElement;
+      lastFocus = document.activeElement
 
       // Set current index
-      currentIndex = index;
+      currentIndex = index
 
       // Clear drag
-      clearDrag();
+      clearDrag()
 
       // Bind events
-      bindEvents();
+      bindEvents()
 
       // Load image
-      load(currentIndex, function() {
-        preload(currentIndex + 1);
-        preload(currentIndex - 1);
-      });
+      load(currentIndex, function () {
+        preload(currentIndex + 1)
+        preload(currentIndex - 1)
+      })
 
-      updateOffset();
-      updateCounter();
-      overlay.setAttribute('aria-hidden', 'false');
+      updateOffset()
+      updateCounter()
+      overlay.setAttribute('aria-hidden', 'false')
 
-      updateFocus('none');
-    };
-
+      updateFocus('none')
+    }
 
     /**
      * Close overlay
      *
      */
-    var closeOverlay = function closeOverlay() {
+    var closeOverlay = function closeOverlay () {
       if (overlay.getAttribute('aria-hidden') === 'true') {
-        return;
+        return
       }
 
       if (!config.scroll) {
-        document.documentElement.classList.remove('tobi--is-open');
-        document.body.classList.remove('tobi--is-open');
+        document.documentElement.classList.remove('tobi--is-open')
+        document.body.classList.remove('tobi--is-open')
       }
 
       // Unbind events
-      unbindEvents();
+      unbindEvents()
 
-      overlay.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true')
 
       // Focus
-      lastFocus.focus();
-    };
-
+      lastFocus.focus()
+    }
 
     /**
      * Clear drag after touchend
      *
      */
-    var clearDrag = function clearDrag() {
+    var clearDrag = function clearDrag () {
       drag = {
         startX: 0,
         endX: 0,
         startY: 0,
         endY: 0
-      };
-    };
-
+      }
+    }
 
     /**
      * Recalculate drag event
      *
      */
-    var updateAfterDrag = function updateAfterDrag() {
+    var updateAfterDrag = function updateAfterDrag () {
       var movementX = drag.endX - drag.startX,
-          movementY = drag.endY - drag.startY,
-          movementXDistance = Math.abs(movementX),
-          movementYDistance = Math.abs(movementY);
+        movementY = drag.endY - drag.startY,
+        movementXDistance = Math.abs(movementX),
+        movementYDistance = Math.abs(movementY)
 
       if (movementX > 0 && movementXDistance > config.threshold) {
-        prev();
+        prev()
       } else if (movementX < 0 && movementXDistance > config.threshold) {
-        next();
+        next()
       } else if (movementY < 0 && movementYDistance > config.threshold && config.swipeClose) {
-        closeOverlay();
+        closeOverlay()
       }
-    };
-
+    }
 
     /**
      * click event handler
      *
      */
-    var clickHandler = function clickHandler(event) {
+    var clickHandler = function clickHandler (event) {
       if (this === prevButton) {
-        prev();
+        prev()
       } else if (this === nextButton) {
-        next();
-      } else if (this === closeButton || this === overlay && event.target.id.indexOf('tobi-figure-wrapper') !== -1) {
-        closeOverlay();
+        next()
+      } else if ((this === closeButton || this === overlay) && event.target.id.indexOf('tobi-figure-wrapper') !== -1) {
+        closeOverlay()
       }
 
-      event.preventDefault();
-    };
-
+      event.preventDefault()
+    }
 
     /**
      * keydown event handler
      *
      */
-    var keydownHandler = function keydownHandler(event) {
+    var keydownHandler = function keydownHandler (event) {
       switch (event.keyCode) {
         // Left arrow
         case 37:
-          prev();
-          break;
+          prev()
+          break
 
         // Right arrow
         case 39:
-          next();
-          break;
+          next()
+          break
 
         // Esc
         case 27:
-          closeOverlay();
-          break;
+          closeOverlay()
+          break
       }
-    };
-
+    }
 
     /**
      * touchstart event handler
      *
      */
-    var touchstartHandler = function touchstartHandler(event) {
-      event.stopPropagation();
+    var touchstartHandler = function touchstartHandler (event) {
+      event.stopPropagation()
 
-      pointerDown = true;
+      pointerDown = true
 
-      drag.startX = event.touches[0].pageX;
-      drag.startY = event.touches[0].pageY;
-    };
-
+      drag.startX = event.touches[0].pageX
+      drag.startY = event.touches[0].pageY
+    }
 
     /**
      * touchmove event handler
      *
      */
-    var touchmoveHandler = function touchmoveHandler(event) {
-      event.preventDefault();
-      event.stopPropagation();
+    var touchmoveHandler = function touchmoveHandler (event) {
+      event.preventDefault()
+      event.stopPropagation()
 
       if (pointerDown) {
-        drag.endX = event.touches[0].pageX;
-        drag.endY = event.touches[0].pageY;
+        drag.endX = event.touches[0].pageX
+        drag.endY = event.touches[0].pageY
       }
-    };
-
+    }
 
     /**
      * touchend event handler
      *
      */
-    var touchendHandler = function touchendHandler() {
-      event.stopPropagation();
+    var touchendHandler = function touchendHandler (event) {
+      event.stopPropagation()
 
-      pointerDown = false;
+      pointerDown = false
 
       if (drag.endX) {
-        updateAfterDrag();
+        updateAfterDrag()
       }
 
-      clearDrag();
-    };
-
+      clearDrag()
+    }
 
     /**
      * mousedown event handler
      *
      */
-    var mousedownHandler = function mousedownHandler(event) {
-      event.preventDefault();
-      event.stopPropagation();
+    var mousedownHandler = function mousedownHandler (event) {
+      event.preventDefault()
+      event.stopPropagation()
 
-      pointerDown = true;
-      drag.startX = event.pageX;
-    };
-
+      pointerDown = true
+      drag.startX = event.pageX
+    }
 
     /**
      * mouseup event handler
      *
      */
-    var mouseupHandler = function mouseupHandler(event) {
-      event.stopPropagation();
+    var mouseupHandler = function mouseupHandler (event) {
+      event.stopPropagation()
 
-      pointerDown = false;
-      slider.style.cursor = '-webkit-grab';
+      pointerDown = false
+      slider.style.cursor = '-webkit-grab'
 
       if (drag.endX) {
-        updateAfterDrag();
+        updateAfterDrag()
       }
 
-      clearDrag();
-    };
-
+      clearDrag()
+    }
 
     /**
      * mousemove event handler
      *
      */
-    var mousemoveHandler = function mousemoveHandler(event) {
-      event.preventDefault();
+    var mousemoveHandler = function mousemoveHandler (event) {
+      event.preventDefault()
 
       if (pointerDown) {
-        drag.endX = event.pageX;
-        slider.style.cursor = '-webkit-grabbing';
+        drag.endX = event.pageX
+        slider.style.cursor = '-webkit-grabbing'
       }
-    };
-
+    }
 
     /**
      * mouseleave event handler
      *
      */
-    var mouseleaveHandler = function mouseleaveHandler(event) {
+    var mouseleaveHandler = function mouseleaveHandler (event) {
       if (pointerDown) {
-        pointerDown = false;
-        slider.style.cursor = '-webkit-grab';
-        drag.endX = event.pageX;
+        pointerDown = false
+        slider.style.cursor = '-webkit-grab'
+        drag.endX = event.pageX
 
-        updateAfterDrag();
-        clearDrag();
+        updateAfterDrag()
+        clearDrag()
       }
-    };
-
+    }
 
     /**
      * Keep focus inside the lightbox
      *
      */
-    var trapFocus = function trapFocus(event) {
+    var trapFocus = function trapFocus (event) {
       if (overlay.getAttribute('aria-hidden') === 'false' && !overlay.contains(event.target)) {
-        event.stopPropagation();
-        updateFocus('none');
+        event.stopPropagation()
+        updateFocus('none')
       }
-    };
-
+    }
 
     /**
      * Bind events
      *
      */
-    var bindEvents = function bindEvents() {
+    var bindEvents = function bindEvents () {
       if (config.keyboard) {
-        document.addEventListener('keydown', keydownHandler);
+        document.addEventListener('keydown', keydownHandler)
       }
 
       if (config.docClose) {
-        overlay.addEventListener('click', clickHandler);
+        overlay.addEventListener('click', clickHandler)
       }
 
-      prevButton.addEventListener('click', clickHandler);
-      nextButton.addEventListener('click', clickHandler);
-      closeButton.addEventListener('click', clickHandler);
+      prevButton.addEventListener('click', clickHandler)
+      nextButton.addEventListener('click', clickHandler)
+      closeButton.addEventListener('click', clickHandler)
 
       if (config.draggable) {
         // Touch events
-        overlay.addEventListener('touchstart', touchstartHandler);
-        overlay.addEventListener('touchmove', touchmoveHandler);
-        overlay.addEventListener('touchend', touchendHandler);
+        overlay.addEventListener('touchstart', touchstartHandler)
+        overlay.addEventListener('touchmove', touchmoveHandler)
+        overlay.addEventListener('touchend', touchendHandler)
 
         // Mouse events
-        overlay.addEventListener('mousedown', mousedownHandler);
-        overlay.addEventListener('mouseup', mouseupHandler);
-        overlay.addEventListener('mouseleave', mouseleaveHandler);
-        overlay.addEventListener('mousemove', mousemoveHandler);
+        overlay.addEventListener('mousedown', mousedownHandler)
+        overlay.addEventListener('mouseup', mouseupHandler)
+        overlay.addEventListener('mouseleave', mouseleaveHandler)
+        overlay.addEventListener('mousemove', mousemoveHandler)
       }
 
-      document.addEventListener('focus', trapFocus, true);
-    };
-
+      document.addEventListener('focus', trapFocus, true)
+    }
 
     /**
      * Unbind events
      *
      */
-    var unbindEvents = function unbindEvents() {
+    var unbindEvents = function unbindEvents () {
       if (config.keyboard) {
-        document.removeEventListener('keydown', keydownHandler);
+        document.removeEventListener('keydown', keydownHandler)
       }
 
       if (config.docClose) {
-        overlay.removeEventListener('click', clickHandler);
+        overlay.removeEventListener('click', clickHandler)
       }
 
-      prevButton.removeEventListener('click', clickHandler);
-      nextButton.removeEventListener('click', clickHandler);
-      closeButton.removeEventListener('click', clickHandler);
+      prevButton.removeEventListener('click', clickHandler)
+      nextButton.removeEventListener('click', clickHandler)
+      closeButton.removeEventListener('click', clickHandler)
 
       if (config.draggable) {
         // Touch events
-        overlay.removeEventListener('touchstart', touchstartHandler);
-        overlay.removeEventListener('touchmove', touchmoveHandler);
-        overlay.removeEventListener('touchend', touchendHandler);
+        overlay.removeEventListener('touchstart', touchstartHandler)
+        overlay.removeEventListener('touchmove', touchmoveHandler)
+        overlay.removeEventListener('touchend', touchendHandler)
 
         // Mouse events
-        overlay.removeEventListener('mousedown', mousedownHandler);
-        overlay.removeEventListener('mouseup', mouseupHandler);
-        overlay.removeEventListener('mouseleave', mouseleaveHandler);
-        overlay.removeEventListener('mousemove', mousemoveHandler);
+        overlay.removeEventListener('mousedown', mousedownHandler)
+        overlay.removeEventListener('mouseup', mouseupHandler)
+        overlay.removeEventListener('mouseleave', mouseleaveHandler)
+        overlay.removeEventListener('mousemove', mousemoveHandler)
       }
 
-      document.removeEventListener('focus', trapFocus);
-    };
-
+      document.removeEventListener('focus', trapFocus)
+    }
 
     /**
      * Init
      *
      */
-    var init = function init(userOptions) {
+    var init = function init (userOptions) {
       // Merge user options into defaults
-      config = mergeOptions(userOptions);
+      config = mergeOptions(userOptions)
 
       // Transform property supported by client
-      transformProperty = transformSupport();
+      transformProperty = transformSupport()
 
       // Get a list of all elements within the document
-      var elements = document.querySelectorAll(config.selector);
+      var elements = document.querySelectorAll(config.selector)
 
       if (!elements.length) {
-        throw new Error('Ups, I can\'t find the selector ' + selector + '.');
+        throw new Error('Ups, I can\'t find the selector ' + config.selector + '.')
       }
 
       // Execute a few things once per element
-      [].forEach.call(elements, function(element, index) {
-        element.classList.add('tobi');
+      [].forEach.call(elements, function (element, index) {
+        element.classList.add('tobi')
 
         // Set zoom icon if necessary
         if (config.zoom && element.getElementsByTagName('img')[0]) {
-          var tobiZoom = document.createElement('div');
+          var tobiZoom = document.createElement('div')
 
-          tobiZoom.classList.add('tobi__zoom-icon');
-          tobiZoom.innerHTML = config.zoomText;
+          tobiZoom.classList.add('tobi__zoom-icon')
+          tobiZoom.innerHTML = config.zoomText
 
-          element.classList.add('tobi--zoom');
-          element.appendChild(tobiZoom);
+          element.classList.add('tobi--zoom')
+          element.appendChild(tobiZoom)
         }
 
         // Bind click event handler
-        element.addEventListener('click', function(event) {
-          event.preventDefault();
+        element.addEventListener('click', function (event) {
+          event.preventDefault()
 
-          openOverlay(index);
-        });
+          openOverlay(index)
+        })
 
         // Add element to gallery
         gallery.push({
           selector: element
-        });
-      });
+        })
+      })
 
-      galleryLength = gallery.length;
-      createOverlay();
-    };
+      galleryLength = gallery.length
+      createOverlay()
+    }
 
+    init(userOptions)
+  }
 
-    init(userOptions);
-  };
-
-  return Tobi;
-}));
+  return Tobi
+}))
