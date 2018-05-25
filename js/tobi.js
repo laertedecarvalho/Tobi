@@ -667,7 +667,7 @@
       document.removeEventListener('focus', trapFocus)
     }
 
-    this.initElement = function initElement(element) {
+    var initElement = function initElement(element) {
       if (gallery.indexOf(element) === -1) {
         gallery.push(element);
         element.classList.add('tobi')
@@ -716,8 +716,13 @@
 
       // Execute a few things once per element
       [].forEach.call(elements, function (element) {
-        initElement(element);
+        initElement(element)
       })
+    }
+
+    // Make private function available from outside
+    this.add = function(element) {
+      initElement(element)
     }
 
     init(userOptions)
