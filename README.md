@@ -40,8 +40,8 @@ The following options are available:
 | --- | --- | --- | --- |
 | selector | string | ".lightbox" | All elements with this class triggers the lightbox. |
 | captions | bool | true | Display captions, if available. |
-| captionsSelector | "self", "img" | "self" | Set the element where the caption is. Set it to "self" for the `a` tag itself |
-| captionAttribute | string | "title" | Get the caption from given attribute. |
+| captionsSelector | "self", "img" | "img" | Set the element where the caption is. Set it to "self" for the `a` tag itself |
+| captionAttribute | string | "alt" | Get the caption from given attribute. |
 | nav | bool, "auto" | "auto" | Display navigation buttons. "auto" hides buttons on touch-enabled devices. |
 | navText | string | ["&amp;lsaquo;", "&amp;rsaquo;"] | Text or HTML for the navigation buttons. |
 | close | bool | true | Display close button. |
@@ -70,5 +70,3 @@ The following options are available:
 ## Notes
 
 If you do anything interesting with this code, please let me know. I'd love to see it.
-
-[![PayPal](https://benjaminedenhuizen.com/data/pp.png)](https://paypal.me/rqrauhvmra)
