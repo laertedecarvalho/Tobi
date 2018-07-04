@@ -19,8 +19,8 @@ npm: `npm install rqrauhvmra__tobi --save`
 Initialize the script by running `Tobi();`. The HTML code may look like this:
 
 ```html
-<a href="path/to/image.jpg" class="lightbox" title="I am a caption">
-  <img src="path/to/thumbnail.jpg" alt="">
+<a href="path/to/image.jpg" class="lightbox">
+  <img src="path/to/thumbnail.jpg" alt="I am a caption">
 </a>
 ```
 
