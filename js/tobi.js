@@ -21,7 +21,7 @@
     root.Tobi = factory()
   }
 }(this, function () {
-  'use strict';
+  'use strict'
   var Tobi = function Tobi (userOptions) {
     /**
      * Merge default options with user options
