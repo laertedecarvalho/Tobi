@@ -21,9 +21,8 @@
     root.Tobi = factory()
   }
 }(this, function () {
+  'use strict'
   var Tobi = function Tobi (userOptions) {
-    'use strict'
-
     /**
      * Merge default options with user options
      *
@@ -68,8 +67,8 @@
     var config = {},
       transformProperty = null,
       gallery = [],
-      galleryLength = null,
-      sliderElement = [],
+      x = 0,
+      sliderElements = [],
       currentIndex = 0,
       drag = {},
       pointerDown = false,
@@ -129,16 +128,16 @@
      * @param {function} callback - Optional callback function
      */
     var load = function load (index, callback) {
-      if (typeof gallery[index] === 'undefined' || typeof sliderElement[index] === 'undefined') {
+      if (typeof gallery[index] === 'undefined' || typeof sliderElements[index] === 'undefined') {
         return
-      } else if (!sliderElement[index].getElementsByTagName('img')[0].hasAttribute('data-src')) {
+      } else if (!sliderElements[index].getElementsByTagName('img')[0].hasAttribute('data-src')) {
         if (callback) {
           callback()
         }
         return
       }
 
-      var figure = sliderElement[index].getElementsByTagName('figure')[0],
+      var figure = sliderElements[index].getElementsByTagName('figure')[0],
         image = figure.getElementsByTagName('img')[0],
         figcaption = figure.getElementsByTagName('figcaption')[0]
 
@@ -175,7 +174,7 @@
      *
      */
     var updateCounter = function updateCounter () {
-      counter.innerHTML = (currentIndex + 1) + '/' + galleryLength
+      counter.innerHTML = (currentIndex + 1) + '/' + gallery.length
     }
 
     /**
@@ -187,7 +186,7 @@
         prevButton.disabled = false
         nextButton.disabled = false
 
-        if (currentIndex === galleryLength - 1) {
+        if (currentIndex === gallery.length - 1) {
           nextButton.disabled = true
         } else if (currentIndex === 0) {
           prevButton.disabled = true
@@ -225,7 +224,7 @@
      *
      */
     var next = function next () {
-      if (currentIndex < galleryLength - 1) {
+      if (currentIndex < gallery.length - 1) {
         currentIndex++
 
         updateOffset()
@@ -256,25 +255,22 @@
      * Create overlay
      *
      */
-    var createOverlay = function createOverlay () {
-      var i = 0,
-        x = 0,
-        figureWrapper = null,
+    var createOverlay = function createOverlay (element) {
+        var figureWrapper = null,
         figure = null,
         image = null,
         figuresIds = [],
         figcaption = null,
         figcaptionsIds = []
 
-      for (; i < galleryLength; ++i) {
-        sliderElement[i] = document.createElement('div')
-        sliderElement[i].classList.add('tobi-slide')
-        sliderElement[i].id = 'tobi-slide-' + i
+        var sliderElement = document.createElement('div')
+        sliderElement.classList.add('tobi-slide')
+        sliderElement.id = 'tobi-slide-' + gallery.length
 
         // Create figure wrapper
         figureWrapper = document.createElement('div')
         figureWrapper.classList.add('tobi-figure-wrapper')
-        figureWrapper.id = 'tobi-figure-wrapper-' + i
+        figureWrapper.id = 'tobi-figure-wrapper-' + gallery.length
 
         // Create figure
         figure = document.createElement('figure')
@@ -284,13 +280,13 @@
         image = document.createElement('img')
         image.style.opacity = '0'
 
-        if (gallery[i].selector.getElementsByTagName('img')[0] && gallery[i].selector.getElementsByTagName('img')[0].alt) {
-          image.alt = gallery[i].selector.getElementsByTagName('img')[0].alt
+        if (element.getElementsByTagName('img')[0] && element.getElementsByTagName('img')[0].alt) {
+          image.alt = element.getElementsByTagName('img')[0].alt
         } else {
           image.alt = ''
         }
         image.setAttribute('src', '')
-        image.setAttribute('data-src', gallery[i].selector.href)
+        image.setAttribute('data-src', element.href)
 
         // Add image to figure
         figure.appendChild(image)
@@ -300,10 +296,10 @@
           figcaption = document.createElement('figcaption')
           figcaption.style.opacity = '0'
 
-          if (config.captionsSelector === 'self' && gallery[i].selector.getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = gallery[i].selector.getAttribute(config.captionAttribute)
-          } else if (config.captionsSelector === 'img' && gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = gallery[i].selector.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)
+          if (config.captionsSelector === 'self' && element.getAttribute(config.captionAttribute)) {
+            figcaption.innerHTML = element.getAttribute(config.captionAttribute)
+          } else if (config.captionsSelector === 'img' && element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
+            figcaption.innerHTML = element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)
           }
 
           if (figcaption.innerHTML) {
@@ -321,11 +317,11 @@
         figureWrapper.appendChild(figure)
 
         // Add figure wrapper to slider element
-        sliderElement[i].appendChild(figureWrapper)
+        sliderElement.appendChild(figureWrapper)
 
         // Add slider element to slider
-        slider.appendChild(sliderElement[i])
-      }
+        slider.appendChild(sliderElement)
+        sliderElements.push(sliderElement);
 
       if (x !== 0) {
         overlay.setAttribute('aria-labelledby', figuresIds.join(' '))
@@ -333,16 +329,18 @@
       }
 
       // Hide buttons if necessary
-      if (!config.nav || galleryLength === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
+      if (!config.nav || gallery.length === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
         prevButton.style.display = 'none'
         nextButton.style.display = 'none'
       } else {
+        prevButton.style.display = 'initial'
+        nextButton.style.display = 'initial'
         prevButton.innerHTML = config.navText[0]
         nextButton.innerHTML = config.navText[1]
       }
 
       // Hide counter if necessary
-      if (!config.counter || galleryLength === 1) {
+      if (!config.counter || gallery.length === 1) {
         counter.style.display = 'none'
       }
 
@@ -669,26 +667,9 @@
       document.removeEventListener('focus', trapFocus)
     }
 
-    /**
-     * Init
-     *
-     */
-    var init = function init (userOptions) {
-      // Merge user options into defaults
-      config = mergeOptions(userOptions)
-
-      // Transform property supported by client
-      transformProperty = transformSupport()
-
-      // Get a list of all elements within the document
-      var elements = document.querySelectorAll(config.selector)
-
-      if (!elements.length) {
-        throw new Error('Ups, I can\'t find the selector ' + config.selector + '.')
-      }
-
-      // Execute a few things once per element
-      [].forEach.call(elements, function (element, index) {
+    var initElement = function initElement(element) {
+      if (gallery.indexOf(element) === -1) {
+        gallery.push(element);
         element.classList.add('tobi')
 
         // Set zoom icon if necessary
@@ -706,21 +687,46 @@
         element.addEventListener('click', function (event) {
           event.preventDefault()
 
-          openOverlay(index)
+          openOverlay(gallery.indexOf(this))
         })
 
         // Add element to gallery
-        gallery.push({
-          selector: element
-        })
-      })
+        createOverlay(element)
+      }
+    }
 
-      galleryLength = gallery.length
-      createOverlay()
+    /**
+     * Init
+     *
+     */
+    var init = function init (userOptions) {
+      // Merge user options into defaults
+      config = mergeOptions(userOptions)
+
+      // Transform property supported by client
+      transformProperty = transformSupport()
+
+      // Get a list of all elements within the document
+      var elements = document.querySelectorAll(config.selector)
+
+      if (!elements.length) {
+        console.log('Ups, I can\'t find the selector ' + config.selector + '.')
+        return;
+      }
+
+      // Execute a few things once per element
+      [].forEach.call(elements, function (element) {
+        initElement(element)
+      })
+    }
+
+    // Make private function available from outside
+    this.add = function(element) {
+      initElement(element)
     }
 
     init(userOptions)
   }
-
+  
   return Tobi
 }))
