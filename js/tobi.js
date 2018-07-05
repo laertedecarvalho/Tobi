@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.3.2
+ * @version 1.4.1
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -22,6 +22,7 @@
   }
 }(this, function () {
   'use strict'
+
   var Tobi = function Tobi (userOptions) {
     /**
      * Merge default options with user options
@@ -256,72 +257,73 @@
      *
      */
     var createOverlay = function createOverlay (element) {
-        var figureWrapper = null,
+      var figureWrapper = null,
         figure = null,
         image = null,
         figuresIds = [],
         figcaption = null,
         figcaptionsIds = []
 
-        var sliderElement = document.createElement('div')
-        sliderElement.classList.add('tobi-slide')
-        sliderElement.id = 'tobi-slide-' + gallery.length
+      var sliderElement = document.createElement('div')
+      sliderElement.classList.add('tobi-slide')
+      sliderElement.id = 'tobi-slide-' + gallery.length
 
-        // Create figure wrapper
-        figureWrapper = document.createElement('div')
-        figureWrapper.classList.add('tobi-figure-wrapper')
-        figureWrapper.id = 'tobi-figure-wrapper-' + gallery.length
+      // Create figure wrapper
+      figureWrapper = document.createElement('div')
+      figureWrapper.classList.add('tobi-figure-wrapper')
+      figureWrapper.id = 'tobi-figure-wrapper-' + gallery.length
 
-        // Create figure
-        figure = document.createElement('figure')
-        figure.innerHTML = '<div class="tobi-loader"></div>'
+      // Create figure
+      figure = document.createElement('figure')
+      figure.innerHTML = '<div class="tobi-loader"></div>'
 
-        // Create image
-        image = document.createElement('img')
-        image.style.opacity = '0'
+      // Create image
+      image = document.createElement('img')
+      image.style.opacity = '0'
 
-        if (element.getElementsByTagName('img')[0] && element.getElementsByTagName('img')[0].alt) {
-          image.alt = element.getElementsByTagName('img')[0].alt
-        } else {
-          image.alt = ''
-        }
-        image.setAttribute('src', '')
-        image.setAttribute('data-src', element.href)
+      if (element.getElementsByTagName('img')[0] && element.getElementsByTagName('img')[0].alt) {
+        image.alt = element.getElementsByTagName('img')[0].alt
+      } else {
+        image.alt = ''
+      }
 
-        // Add image to figure
-        figure.appendChild(image)
+      image.setAttribute('src', '')
+      image.setAttribute('data-src', element.href)
 
-        // Create figcaption
-        if (config.captions) {
-          figcaption = document.createElement('figcaption')
-          figcaption.style.opacity = '0'
+      // Add image to figure
+      figure.appendChild(image)
 
-          if (config.captionsSelector === 'self' && element.getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = element.getAttribute(config.captionAttribute)
-          } else if (config.captionsSelector === 'img' && element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
-            figcaption.innerHTML = element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)
-          }
+      // Create figcaption
+      if (config.captions) {
+        figcaption = document.createElement('figcaption')
+        figcaption.style.opacity = '0'
 
-          if (figcaption.innerHTML) {
-            figure.id = 'tobi-figure-' + x
-            figcaption.id = 'tobi-figcaption-' + x
-            figure.appendChild(figcaption)
-
-            figuresIds.push('tobi-figure-' + x)
-            figcaptionsIds.push('tobi-figcaption-' + x)
-            ++x
-          }
+        if (config.captionsSelector === 'self' && element.getAttribute(config.captionAttribute)) {
+          figcaption.innerHTML = element.getAttribute(config.captionAttribute)
+        } else if (config.captionsSelector === 'img' && element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)) {
+          figcaption.innerHTML = element.getElementsByTagName('img')[0].getAttribute(config.captionAttribute)
         }
 
-        // Add figure to figure wrapper
-        figureWrapper.appendChild(figure)
+        if (figcaption.innerHTML) {
+          figure.id = 'tobi-figure-' + x
+          figcaption.id = 'tobi-figcaption-' + x
+          figure.appendChild(figcaption)
 
-        // Add figure wrapper to slider element
-        sliderElement.appendChild(figureWrapper)
+          figuresIds.push('tobi-figure-' + x)
+          figcaptionsIds.push('tobi-figcaption-' + x)
+          ++x
+        }
+      }
 
-        // Add slider element to slider
-        slider.appendChild(sliderElement)
-        sliderElements.push(sliderElement);
+      // Add figure to figure wrapper
+      figureWrapper.appendChild(figure)
+
+      // Add figure wrapper to slider element
+      sliderElement.appendChild(figureWrapper)
+
+      // Add slider element to slider
+      slider.appendChild(sliderElement)
+      sliderElements.push(sliderElement)
 
       if (x !== 0) {
         overlay.setAttribute('aria-labelledby', figuresIds.join(' '))
@@ -667,9 +669,9 @@
       document.removeEventListener('focus', trapFocus)
     }
 
-    var initElement = function initElement(element) {
+    var initElement = function initElement (element) {
       if (gallery.indexOf(element) === -1) {
-        gallery.push(element);
+        gallery.push(element)
         element.classList.add('tobi')
 
         // Set zoom icon if necessary
@@ -711,7 +713,7 @@
 
       if (!elements.length) {
         console.log('Ups, I can\'t find the selector ' + config.selector + '.')
-        return;
+        return
       }
 
       // Execute a few things once per element
@@ -721,12 +723,12 @@
     }
 
     // Make private function available from outside
-    this.add = function(element) {
+    this.add = function (element) {
       initElement(element)
     }
 
     init(userOptions)
   }
-  
+
   return Tobi
 }))
