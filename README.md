@@ -16,7 +16,13 @@ npm: `npm install rqrauhvmra__tobi --save`
 
 ## Usage
 
-Initialize the script by running `Tobi();`. The HTML code may look like this:
+Initialize the script by running:
+
+```js
+var tobi = new Tobi()
+```
+
+The HTML code may look like this:
 
 ```html
 <a href="path/to/image.jpg" class="lightbox">
@@ -29,9 +35,9 @@ Initialize the script by running `Tobi();`. The HTML code may look like this:
 You can pass an object with custom options as an argument.
 
 ```js
-Tobi({
-  captions: false,
-});
+var tobi = new Tobi({
+  docClose: true
+})
 ```
 
 The following options are available:
