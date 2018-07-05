@@ -2,12 +2,12 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.3.1
+ * @version 1.3.2
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
  */
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(factory)
@@ -34,8 +34,8 @@
       var options = {
         selector: '.lightbox',
         captions: true,
-        captionsSelector: 'self',
-        captionAttribute: 'title',
+        captionsSelector: 'img',
+        captionAttribute: 'alt',
         nav: 'auto',
         navText: ['&lsaquo;', '&rsaquo;'],
         close: true,
