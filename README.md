@@ -7,6 +7,8 @@ Simple lightbox script without dependencies.
 
 [Play on CodePen](https://codepen.io/collection/nbqJVV)
 
+![.flex__*](https://rqrauhvmra.com/tobi/snapshot.png)
+
 ## Install
 
 ### Download
