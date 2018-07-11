@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.4.4
+ * @version 1.5.0
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -743,6 +743,10 @@
     init(userOptions)
 
     return {
+      prev: prev,
+      next: next,
+      open: openOverlay,
+      close: closeOverlay,
       add: add
     }
   }

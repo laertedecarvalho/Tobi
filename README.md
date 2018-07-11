@@ -1,5 +1,5 @@
 # Tobi
-[![Version](https://img.shields.io/badge/version-1.4.4-0437fd.svg)](https://github.com/rqrauhvmra/Tobi/releases)
+[![Version](https://img.shields.io/badge/version-1.5.0-0437fd.svg)](https://github.com/rqrauhvmra/Tobi/releases)
 [![License](https://img.shields.io/badge/license-MIT-0437fd.svg)](https://github.com/rqrauhvmra/tobi/blob/master/LICENSE.md)
 ![Dependecies](https://img.shields.io/badge/dependencies-none-0437fd.svg)
 
@@ -68,6 +68,19 @@ The following options are available:
 | scroll | bool | false | Hide scrollbars if lightbox is displayed |
 | draggable | bool | true | Use dragging and touch swiping |
 | threshold | number | 20 | Touch and mouse dragging threshold (in px) |
+
+## API
+
+```javascript
+var tobi = new Tobi({
+  // Options
+})
+
+tobi.open(2)  // Opens the lightbox on image 3 (first is 0)
+tobi.next()   // Shows the next image in the lightbox
+tobi.prev()   // Shows the previous image in the lightbox
+tobi.close()  // Close the lightbox
+```
 
 ## Missing stuff
 
