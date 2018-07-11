@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.4.1
+ * @version 1.4.2
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -69,6 +69,8 @@
       transformProperty = null,
       gallery = [],
       x = 0,
+      elements = null,
+      elementsLength = null,
       sliderElements = [],
       currentIndex = 0,
       drag = {},
@@ -175,7 +177,7 @@
      *
      */
     var updateCounter = function updateCounter () {
-      counter.innerHTML = (currentIndex + 1) + '/' + gallery.length
+      counter.innerHTML = (currentIndex + 1) + '/' + elementsLength
     }
 
     /**
@@ -187,7 +189,7 @@
         prevButton.disabled = false
         nextButton.disabled = false
 
-        if (currentIndex === gallery.length - 1) {
+        if (currentIndex === elementsLength - 1) {
           nextButton.disabled = true
         } else if (currentIndex === 0) {
           prevButton.disabled = true
@@ -225,7 +227,7 @@
      *
      */
     var next = function next () {
-      if (currentIndex < gallery.length - 1) {
+      if (currentIndex < elementsLength - 1) {
         currentIndex++
 
         updateOffset()
@@ -266,12 +268,12 @@
 
       var sliderElement = document.createElement('div')
       sliderElement.classList.add('tobi-slide')
-      sliderElement.id = 'tobi-slide-' + gallery.length
+      sliderElement.id = 'tobi-slide-' + x
 
       // Create figure wrapper
       figureWrapper = document.createElement('div')
       figureWrapper.classList.add('tobi-figure-wrapper')
-      figureWrapper.id = 'tobi-figure-wrapper-' + gallery.length
+      figureWrapper.id = 'tobi-figure-wrapper-' + x
 
       // Create figure
       figure = document.createElement('figure')
@@ -331,7 +333,7 @@
       }
 
       // Hide buttons if necessary
-      if (!config.nav || gallery.length === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
+      if (!config.nav || elementsLength === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
         prevButton.style.display = 'none'
         nextButton.style.display = 'none'
       } else {
@@ -342,7 +344,7 @@
       }
 
       // Hide counter if necessary
-      if (!config.counter || gallery.length === 1) {
+      if (!config.counter || elementsLength === 1) {
         counter.style.display = 'none'
       }
 
@@ -709,9 +711,12 @@
       transformProperty = transformSupport()
 
       // Get a list of all elements within the document
-      var elements = document.querySelectorAll(config.selector)
+      elements = document.querySelectorAll(config.selector)
 
-      if (!elements.length) {
+      // Saves the number of elements
+      elementsLength = elements.length
+
+      if (!elementsLength) {
         console.log('Ups, I can\'t find the selector ' + config.selector + '.')
         return
       }
@@ -725,6 +730,7 @@
     // Make private function available from outside
     this.add = function (element) {
       initElement(element)
+      elementsLength++
     }
 
     init(userOptions)
