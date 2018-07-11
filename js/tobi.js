@@ -2,7 +2,7 @@
  * Tobi
  *
  * @author rqrauhvmra
- * @version 1.4.2
+ * @version 1.4.3
  * @url https://github.com/rqrauhvmra/Tobi
  *
  * MIT License
@@ -334,23 +334,23 @@
 
       // Hide buttons if necessary
       if (!config.nav || elementsLength === 1 || (config.nav === 'auto' && 'ontouchstart' in window)) {
-        prevButton.style.display = 'none'
-        nextButton.style.display = 'none'
+        prevButton.classList.add('hide')
+        nextButton.classList.add('hide')
       } else {
-        prevButton.style.display = 'initial'
-        nextButton.style.display = 'initial'
+        prevButton.classList.remove('hide')
+        nextButton.classList.remove('hide')
         prevButton.innerHTML = config.navText[0]
         nextButton.innerHTML = config.navText[1]
       }
 
       // Hide counter if necessary
       if (!config.counter || elementsLength === 1) {
-        counter.style.display = 'none'
+        counter.classList.add('hide')
       }
 
       // Hide close if necessary
       if (!config.close) {
-        closeButton.style.display = 'none'
+        closeButton.classList.add('hide')
       } else {
         closeButton.innerHTML = config.closeText
       }
@@ -671,6 +671,10 @@
       document.removeEventListener('focus', trapFocus)
     }
 
+    /**
+     * Init element
+     *
+     */
     var initElement = function initElement (element) {
       if (gallery.indexOf(element) === -1) {
         gallery.push(element)
@@ -727,13 +731,20 @@
       })
     }
 
-    // Make private function available from outside
-    this.add = function (element) {
+    /**
+     * Adds an element dynamically
+     *
+     */
+    var add = function add (element) {
       initElement(element)
       elementsLength++
     }
 
     init(userOptions)
+
+    return {
+      add: add
+    }
   }
 
   return Tobi

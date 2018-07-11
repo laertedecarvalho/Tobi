@@ -40,6 +40,11 @@
   overflow-y: hidden;
 }
 
+/* Hide elements */
+.hide {
+  display: none;
+}
+
 /* Overlay */
 .tobi-overlay {
   background-color: rgba(0, 0, 0, 0.8);

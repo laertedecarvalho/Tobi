@@ -1,7 +1,7 @@
 {
   "name": "rqrauhvmra__tobi",
-  "version": "1.4.2",
-  "description": "A simple lightbox script without dependencies.",
+  "version": "1.4.3",
+  "description": "A light-weight and open source lightbox script with no dependencies.",
   "main": "js/tobi.js",
   "style": "css/tobi.css",
   "scripts": {
@@ -13,7 +13,10 @@
   },
   "keywords": [
     "lightbox",
-    "javascript"
+    "javascript",
+    "lightbox-script",
+    "javascript-lightbox",
+    "vanilla-javascript"
   ],
   "author": "rqrauhvmra",
   "license": "MIT",
