@@ -42,7 +42,7 @@
 
 /* Hide elements */
 .hide {
-  display: none;
+  display: none !important;
 }
 
 /* Overlay */
