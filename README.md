@@ -80,6 +80,10 @@ tobi.open(2)  // Opens the lightbox on image 3 (first is 0)
 tobi.next()   // Shows the next image in the lightbox
 tobi.prev()   // Shows the previous image in the lightbox
 tobi.close()  // Close the lightbox
+
+// Adds an element dynamically
+var newElement = document.querySelector('.new-image')
+tobi.add(newElement)
 ```
 
 ## Missing stuff
